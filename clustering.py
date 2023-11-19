@@ -4,7 +4,7 @@ from utilitaries import read_csv_file
 import numpy as np
 from yellowbrick.cluster import KElbowVisualizer
 from yellowbrick.cluster import SilhouetteVisualizer
-
+from sklearn.decomposition import PCA
    
 
 BUGS = read_csv_file('data_to_cluster/bugs_to_cluster.csv')
@@ -31,6 +31,15 @@ Silhouette method to find the optimal number of clusters
 Used to validate the results of the elbow method
 Tests the number of clusters from 2 to 10
 Saves a plot of the silhouette method in the clustering_images folder
+
+
+Average silhouette score for 2 centers:  0.17962307224129012
+Average silhouette score for 3 centers:  0.17697695388105275
+Average silhouette score for 4 centers:  0.1132155255619642
+Average silhouette score for 5 centers:  0.10921873544136806
+Average silhouette score for 6 centers:  0.10731665995852611
+Average silhouette score for 7 centers:  0.0815382219412979
+
 '''
 def silhouette_clustering():
     fig, ax = plt.subplots(3, 2, figsize=(30,20))
@@ -40,40 +49,32 @@ def silhouette_clustering():
         
         visualizer = SilhouetteVisualizer(km, colors='yellowbrick', ax=ax[q-1][mod])
         visualizer.fit(X)
+        print(f'Average silhouette score for {i} centers: ', visualizer.silhouette_score_)
         visualizer.show(outpath="clustering_images/silhouette_plot_2-7.png") 
 
 
 '''
 Clusters the data from the CSV file
 '''
-def cluster_data():
-    # Read the CSV file into a dictionary
-    data_dict = read_csv_file('data_to_cluster/bugs_to_cluster.csv')
-
-    # Convert the dictionary values to a 2D list
-    data = [value for value in data_dict.values()]
-
-    # Convert the 2D list to a numpy array
-    X = np.array(data)
-
-    # Create a KMeans object with 3 clusters
-    kmeans = KMeans(n_clusters=3)
-
-    # Fit the data to the `kmeans` object
+def cluster_data(no_clusters=5):
+    kmeans = KMeans(n_clusters=no_clusters)
     kmeans.fit(X)
+    y_kmeans = kmeans.predict(X)
 
-    # Print the cluster centers
-    print(kmeans.cluster_centers_)
+    pca = PCA(n_components=2)
+    principalComponents = pca.fit_transform(X)
 
-    # Print the cluster labels
-    print(kmeans.labels_)
+    plt.scatter(principalComponents[:, 0], principalComponents[:, 1], c=y_kmeans, s=50, cmap='viridis')
+    
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.title(f'Clustering with {no_clusters} centers')
 
-    # Plotting the cluster centers and the data points on a 2D plane
-    plt.scatter(X[:,0], X[:,1], c=kmeans.labels_, cmap='rainbow')
-    plt.scatter(kmeans.cluster_centers_[:,0] ,kmeans.cluster_centers_[:,1], color='black')
-    plt.savefig('cluster_plot.png')
+    plt.savefig(f'clustering_images/clustering_{no_clusters}_centers.png')
 
 if __name__ == '__main__':
     # elbow_clustering()
     # silhouette_clustering()
-    cluster_data()
+    cluster_data(4)
+    cluster_data(5)
+    cluster_data(6)
