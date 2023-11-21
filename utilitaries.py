@@ -1,6 +1,5 @@
 import csv
 
-
 '''
 Reads a CSV file and returns a dictionary 
 with the first column as keys and the rest of the columns as values
@@ -19,13 +18,20 @@ def read_csv_file(file_path):
 
     return result
 
-
-
 '''
 Writes a dictionary to a CSV file
 '''
-def write_to_file(filename, data):
+def write_dict_to_file(filename, data):
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         for key, value in data.items():
             writer.writerow([key] + value)
+
+'''
+Writes a list to a CSV file
+'''
+def write_list_to_file(filename, data):
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(data)
+    

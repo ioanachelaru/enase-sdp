@@ -1,6 +1,6 @@
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
-from utilitaries import read_csv_file
+from utilitaries import read_csv_file, write_list_to_file
 import numpy as np
 from yellowbrick.cluster import KElbowVisualizer
 from yellowbrick.cluster import SilhouetteVisualizer
@@ -60,6 +60,9 @@ def cluster_data(no_clusters=5):
     kmeans = KMeans(n_clusters=no_clusters)
     kmeans.fit(X)
     y_kmeans = kmeans.predict(X)
+
+    labeled_data = [[y_kmeans[i]] + sublist for i, sublist in enumerate(BUGS_VALUES)]
+    write_list_to_file(f'clustered_data/clustered_data_{no_clusters}_centers.csv', labeled_data)
 
     pca = PCA(n_components=2)
     principalComponents = pca.fit_transform(X)
