@@ -1,13 +1,13 @@
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
-from utilitaries import read_csv_file, write_list_to_file
+from utilitaries import read_csv_file, write_list_to_file, write_dict_to_file
 import numpy as np
 from yellowbrick.cluster import KElbowVisualizer
 from yellowbrick.cluster import SilhouetteVisualizer
 from sklearn.decomposition import PCA
    
 
-BUGS = read_csv_file('data_to_cluster/bugs_to_cluster.csv')
+BUGS = read_csv_file('parsed_data/bugs_to_cluster.csv')
 BUGS_IDs = [key for key in BUGS.keys()]
 BUGS_VALUES = [[float(item) for item in value] for value in BUGS.values()]
 X = np.array(BUGS_VALUES)
@@ -54,15 +54,38 @@ def silhouette_clustering():
 
 
 '''
+Labels the data for binary classification
+The data is labeled with 1 if the bug is in the target cluster and 0 otherwise
+'''
+def label_data_for_binary_classification(target_cluster, target_file):
+    all_data = read_csv_file('parsed_data/all_to_cluster.csv')
+    clustered_bugs = read_csv_file(f'clustered_data/{target_file}')
+
+    labeled_bugs = {key: ([1 if int(values[0]) == target_cluster else 0] + values[1:]) for key, values in clustered_bugs.items()}
+    labeled_data = {key: [0] + values for key, values in all_data.items()}
+
+    labeled_data.update(labeled_bugs)
+    
+    return labeled_data
+
+'''
 Clusters the data from the CSV file
+Creates plots for the clusters
+Saves the labeled data for each cluster in a CSV file
 '''
 def cluster_data(no_clusters=5):
     kmeans = KMeans(n_clusters=no_clusters)
     kmeans.fit(X)
     y_kmeans = kmeans.predict(X)
 
-    labeled_data = [[y_kmeans[i]] + sublist for i, sublist in enumerate(BUGS_VALUES)]
+    labeled_data = [[BUGS_IDs[i], y_kmeans[i]] + sublist for i, sublist in enumerate(BUGS_VALUES)]
     write_list_to_file(f'clustered_data/clustered_data_{no_clusters}_centers.csv', labeled_data)
+
+
+    for i in range(1, no_clusters + 1):
+        data = label_data_for_binary_classification(i, f'clustered_data_{no_clusters}_centers.csv')
+        write_dict_to_file(f'data_to_cluster/{no_clusters}_clusters/labeled_data_for_cluster_{i}.csv', data)
+
 
     pca = PCA(n_components=2)
     principalComponents = pca.fit_transform(X)
@@ -74,10 +97,11 @@ def cluster_data(no_clusters=5):
     plt.title(f'Clustering with {no_clusters} centers')
 
     plt.savefig(f'clustering_images/clustering_{no_clusters}_centers.png')
+        
 
 if __name__ == '__main__':
     # elbow_clustering()
     # silhouette_clustering()
-    cluster_data(4)
-    cluster_data(5)
-    cluster_data(6)
+    # cluster_data(4)
+    # cluster_data(5)
+    # cluster_data(6)

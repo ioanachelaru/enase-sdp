@@ -42,10 +42,10 @@ with only the important features
 '''
 if __name__ == '__main__':
     all = read_excel_file(XLSX_FILE_PATH, ALL_SHEET_NAME)
-    write_to_file("data_to_cluster/all_to_cluster.csv", all)
+    write_to_file("parsed_data/all_to_cluster.csv", all)
 
     bugs = read_excel_file(XLSX_FILE_PATH, BUGS_SHEET_NAME)
-    write_to_file("data_to_cluster/bugs_to_cluster.csv", bugs)
+    write_to_file("parsed_data/bugs_to_cluster.csv", bugs)
 
 
 

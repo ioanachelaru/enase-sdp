@@ -24,11 +24,11 @@ Writes a dictionary to a CSV file
 def write_dict_to_file(filename, data):
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        for key, value in data.items():
-            writer.writerow([key] + value)
+        for key, values in data.items():
+            writer.writerow([key] + values)
 
 '''
-Writes a list to a CSV file
+Writes a 2D list to a CSV file
 '''
 def write_list_to_file(filename, data):
     with open(filename, 'w', newline='') as csvfile:
