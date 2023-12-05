@@ -25,7 +25,10 @@ def write_dict_to_file(filename, data):
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         for key, values in data.items():
-            writer.writerow([key] + values)
+            if isinstance(values, list):
+                writer.writerow([key] + values)
+            else:
+                writer.writerow([key, values])
 
 '''
 Writes a 2D list to a CSV file

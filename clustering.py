@@ -23,7 +23,7 @@ def elbow_clustering():
     visualizer = KElbowVisualizer(km, k=(2,10))
     
     visualizer.fit(X)
-    visualizer.show(outpath="clustering_images/elbow_plot_fancy.png")
+    visualizer.show(outpath="clustering_images/elbow_plot.png")
 
 
 '''
@@ -102,6 +102,6 @@ def cluster_data(no_clusters=5):
 if __name__ == '__main__':
     # elbow_clustering()
     # silhouette_clustering()
-    # cluster_data(4)
-    # cluster_data(5)
-    # cluster_data(6)
+    cluster_data(4)
+    cluster_data(5)
+    cluster_data(6)
