@@ -82,7 +82,7 @@ def cluster_data(no_clusters=5):
     write_list_to_file(f'clustered_data/clustered_data_{no_clusters}_centers.csv', labeled_data)
 
 
-    for i in range(1, no_clusters + 1):
+    for i in range(0, no_clusters):
         data = label_data_for_binary_classification(i, f'clustered_data_{no_clusters}_centers.csv')
         write_dict_to_file(f'data_to_cluster/{no_clusters}_clusters/labeled_data_for_cluster_{i}.csv', data)
 

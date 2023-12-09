@@ -16,7 +16,7 @@ VERBOSE = 1
 def create_model(input_dim):
     model = Sequential()
     model.add(Dense(32, input_dim=input_dim, activation=ACTIVATION[0]))  # Input layer
-    model.add(Dense(16, activation=ACTIVATION[0]))  # Hidden layer
+    # model.add(Dense(16, activation=ACTIVATION[0]))  # Hidden layer
     model.add(Dense(1, activation=ACTIVATION[1]))  # Output layer
 
     model.compile(loss=LOSS, optimizer=OPTIMIZER, metrics=METRICS)
@@ -49,6 +49,8 @@ def read_data(filepath):
     y_train = pd.read_csv(filepath + 'y_train.csv', index_col=0, header=None)
     y_val = pd.read_csv(filepath + 'y_val.csv', index_col=0, header=None)
     y_test = pd.read_csv(filepath + 'y_test.csv', index_col=0, header=None)
+    
+
 
     return x_train, x_val, x_test, y_train, y_val, y_test
 
@@ -58,9 +60,9 @@ def binary_classification(no_clusters, target_cluster, filename):
 
     model = create_model(60)
     model = train_model(no_clusters, target_cluster, model, x_train, y_train, x_val, y_val)
-    # score = model.evaluate(x_test, y_test, verbose=VERBOSE)
-    # print("Test score:", score[0])
-    # print("Test accuracy:", score[1])
+    score = model.evaluate(x_test, y_test, verbose=VERBOSE)
+    print("Test score:", score[0])
+    print("Test accuracy:", score[1])
 
     # return model
 

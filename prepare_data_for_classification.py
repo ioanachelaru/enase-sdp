@@ -44,6 +44,6 @@ if __name__ == '__main__':
     for i in range(4, 7):
         print(f'Preparing data for {i} clusters...')
         
-        for ii in range(1, i+1):
+        for ii in range(0, i):
             print(f'...Preparing data for cluster {ii}...')
             prepare_data_for_classif(i, ii, f'data_to_cluster/{i}_clusters/labeled_data_for_cluster_{ii}.csv')
