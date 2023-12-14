@@ -5,6 +5,7 @@ from tensorflow.keras.layers import Dense
 import matplotlib.pyplot as plt
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
 # from sklearn.ensemble import RandomForestClassifier
 
 NO_EPOCHS = 10
@@ -15,6 +16,14 @@ METRICS = ['accuracy']
 ACTIVATION = ['relu', 'sigmoid']
 VERBOSE = 1
 
+def generate_confusion_matrix(y_true, y_pred, filename):
+    cm = confusion_matrix(y_true, y_pred)
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title("Confusion Matrix")
+    plt.savefig(filename)
+    plt.close()
 
 def create_model(input_dim):
     model = Sequential()
@@ -68,6 +77,9 @@ def binary_classification(no_clusters, target_cluster, filename):
 
     model = create_model(60)
     model = train_model(no_clusters, target_cluster, model, x_train, y_train, x_val, y_val)
+
+    model.save(filename + 'binary_classif.h5')
+
     loss, accuracy = model.evaluate(x_test, y_test, verbose=VERBOSE)
     print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
     
@@ -79,9 +91,10 @@ def binary_classification(no_clusters, target_cluster, filename):
 
     # Print classification report and confusion matrix
     print("Classification Report:\n", classification_report(y_test, binary_predictions))
-    print("Confusion Matrix:\n", confusion_matrix(y_test, binary_predictions))
+    
+    generate_confusion_matrix(y_test, binary_predictions, filename + "confusion_matrix.png")
 
-    return model
+
 
 if __name__ == '__main__':
     binary_classification(4, 1, 'data_to_cluster/4_clusters/data_cluster_1/')
