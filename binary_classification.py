@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+from keras.optimizers import Adam
 import matplotlib.pyplot as plt
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import classification_report, confusion_matrix
@@ -11,7 +12,7 @@ import seaborn as sns
 NO_EPOCHS = 10
 BATCH_SIZE = 32
 LOSS = 'binary_crossentropy'
-OPTIMIZER = 'adam'
+LEARNING_RATE = 0.001
 METRICS = ['accuracy']
 ACTIVATION = ['relu', 'sigmoid']
 VERBOSE = 1
@@ -28,10 +29,10 @@ def generate_confusion_matrix(y_true, y_pred, filename):
 def create_model(input_dim):
     model = Sequential()
     model.add(Dense(32, input_dim=input_dim, activation=ACTIVATION[0]))  # Input layer
-    # model.add(Dense(16, activation=ACTIVATION[0]))  # Hidden layer
+    model.add(Dense(64, activation=ACTIVATION[0]))  # Hidden layer
     model.add(Dense(1, activation=ACTIVATION[1]))  # Output layer
 
-    model.compile(loss=LOSS, optimizer=OPTIMIZER, metrics=METRICS)
+    model.compile(loss=LOSS, optimizer=Adam(learning_rate=LEARNING_RATE), metrics=METRICS)
 
     return model
 
