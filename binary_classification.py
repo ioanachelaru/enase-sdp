@@ -78,7 +78,7 @@ def read_data(filepath):
 def binary_classification(no_clusters, target_cluster, filename):
     x_train, x_val, x_test, y_train, y_val, y_test = read_data(filename)
 
-    model = create_model(60)
+    model = create_model(65)
     model = train_model(no_clusters, target_cluster, model, x_train, y_train, x_val, y_val)
 
     model.save(filename + 'binary_classif.keras')
@@ -108,4 +108,4 @@ if __name__ == '__main__':
         
         for ii in range(0, i):
             print(f'...building model for cluster {ii}...')
-            binary_classification(no_clusters, target_cluster, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
+            binary_classification(i, ii, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
