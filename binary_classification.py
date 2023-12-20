@@ -1,21 +1,21 @@
 import pandas as pd
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Dropout
 from keras.optimizers import Adam
 import matplotlib.pyplot as plt
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
-# from sklearn.ensemble import RandomForestClassifier
 
-NO_EPOCHS = 20
+NO_EPOCHS = 15
 BATCH_SIZE = 16
 LOSS = 'binary_crossentropy'
 LEARNING_RATE = 0.001
 METRICS = ['accuracy']
 ACTIVATION = ['relu', 'sigmoid']
 VERBOSE = 1
+DOPOUT_RATE = 0.2
 
 def generate_confusion_matrix(y_true, y_pred, filename):
     plt.clf()
@@ -30,9 +30,8 @@ def generate_confusion_matrix(y_true, y_pred, filename):
 def create_model(input_dim):
     model = Sequential()
     model.add(Dense(16, input_dim=input_dim, activation=ACTIVATION[0]))  # Input layer
-    model.add(Dense(32, activation=ACTIVATION[0]))  # Hidden layer
     model.add(Dense(16, activation=ACTIVATION[0]))  # Hidden layer
-    model.add(Dense(16, activation=ACTIVATION[0]))  # Hidden layer
+    model.add(Dropout(DOPOUT_RATE))  # Dropout layer
     model.add(Dense(1, activation=ACTIVATION[1]))  # Output layer
 
     model.compile(loss=LOSS, optimizer=Adam(learning_rate=LEARNING_RATE), metrics=METRICS)
@@ -82,7 +81,7 @@ def binary_classification(no_clusters, target_cluster, filename):
     model = create_model(60)
     model = train_model(no_clusters, target_cluster, model, x_train, y_train, x_val, y_val)
 
-    model.save(filename + 'binary_classif.h5')
+    model.save(filename + 'binary_classif.keras')
 
     loss, accuracy = model.evaluate(x_test, y_test, verbose=VERBOSE)
     print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
@@ -93,18 +92,20 @@ def binary_classification(no_clusters, target_cluster, filename):
     # Threshold predictions to convert probabilities to binary predictions
     binary_predictions = (predictions > 0.5).astype(int)
 
-    # Print classification report and confusion matrix
-    print("Classification Report:\n", classification_report(y_test, binary_predictions))
+    # Save classification report to a file
+    report = classification_report(y_test, binary_predictions, output_dict=True)
+    report_df = pd.DataFrame(report).transpose()
+    report_df.to_csv(filename + "classification_report.csv")
     
     generate_confusion_matrix(y_test, binary_predictions, filename + "confusion_matrix.png")
 
 
 
 if __name__ == '__main__':
-    binary_classification(4, 1, 'data_to_cluster/4_clusters/data_cluster_1/')
-    # for i in range(4, 7):
-    #     print(f'Building model for {i} clusters...')
+    # binary_classification(4, 1, 'data_to_cluster/4_clusters/data_cluster_1/')
+    for i in range(4, 7):
+        print(f'Building model for {i} clusters...')
         
-    #     for ii in range(0, i):
-    #         print(f'...building model for cluster {ii}...')
-    #         binary_classification(no_clusters, target_cluster, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
+        for ii in range(0, i):
+            print(f'...building model for cluster {ii}...')
+            binary_classification(no_clusters, target_cluster, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
