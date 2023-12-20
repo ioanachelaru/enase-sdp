@@ -12,8 +12,8 @@ from binary_classification import generate_confusion_matrix
 from prepare_data_for_classification import split_data
 from utilitaries import read_csv_file, write_dict_to_file
 
-NO_EPOCHS = 15
-BATCH_SIZE = 16
+NO_EPOCHS = 40
+BATCH_SIZE = 32
 LOSS = 'categorical_crossentropy'  # Change the loss function for multi-class classification
 LEARNING_RATE = 0.001
 METRICS = ['accuracy']
@@ -24,6 +24,7 @@ DOPOUT_RATE = 0.2
 def create_model(input_dim, num_classes):
     model = Sequential()
     model.add(Dense(16, input_dim=input_dim, activation=ACTIVATION))  # Input layer
+    model.add(Dense(32, activation=ACTIVATION))  # Hidden layer
     model.add(Dense(16, activation=ACTIVATION))  # Hidden layer
     model.add(Dropout(DOPOUT_RATE))  # Dropout layer
     model.add(Dense(num_classes, activation='softmax'))  # Output layer with softmax for multi-class classification
@@ -51,7 +52,7 @@ def train_model(no_clusters, model, x_train, y_train, x_val, y_val):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Validation'], loc='upper right')
-    plt.savefig(f'data_to_cluster/{no_clusters}_clusters/data_cluster_{target_cluster}/model_loss.png')
+    plt.savefig(f'multiclass_classification/{no_clusters}_clusters/model_loss.png')
 
     return model
 
@@ -89,7 +90,7 @@ def split_data_for_multiclass_classification(no_clusters):
 
     return x_train, x_val, x_test, y_train, y_val, y_test
 
-def read_data(no_clusters, filepath):
+def read_data(filepath):
     x_train = pd.read_csv(filepath + '/x_train.csv', index_col=0, header=None)
     x_val = pd.read_csv(filepath + '/x_val.csv', index_col=0, header=None)
     x_test = pd.read_csv(filepath + '/x_test.csv', index_col=0, header=None)
@@ -99,15 +100,16 @@ def read_data(no_clusters, filepath):
 
     return x_train, x_val, x_test, y_train, y_val, y_test
 
-def multi_class_classification(no_clusters, filename):
-    x_train, x_val, x_test, y_train, y_val, y_test = read_data(filename)
+def multi_class_classification(no_clusters):
+    filepath = f'multiclass_classification/{no_clusters}_clusters/'
+    x_train, x_val, x_test, y_train, y_val, y_test = read_data(filepath)
 
-    num_classes = len(np.unique(y_train))
+    num_classes = no_clusters + 1  # Add 1 for the unlabeled class
 
     model = create_model(60, num_classes)
     model = train_model(no_clusters, model, x_train, y_train, x_val, y_val)
 
-    model.save(filename + f'{no_clusters}_centers_multi_class_model.keras')
+    model.save(filepath + f'{no_clusters}_centers_multi_class_model.keras')
 
     loss, accuracy = model.evaluate(x_test, pd.get_dummies(y_test), verbose=VERBOSE)
     print(f'Test Loss: {loss}, Test Accuracy: {accuracy}')
@@ -121,16 +123,16 @@ def multi_class_classification(no_clusters, filename):
     # Save classification report to a file
     report = classification_report(y_test, predicted_labels, output_dict=True)
     report_df = pd.DataFrame(report).transpose()
-    report_df.to_csv(filename + "classification_report.csv")
+    report_df.to_csv(filepath + "classification_report.csv")
 
-    generate_confusion_matrix(y_test, predicted_labels, filename + f'{no_clusters}_centers_confusion_matrix.png')
+    generate_confusion_matrix(y_test, predicted_labels, filepath + f'{no_clusters}_centers_confusion_matrix.png')
 
 if __name__ == '__main__':
-    for i in range(4, 7):
-        print(f'Split and write data for {i} clusters...')
-        split_data_for_multiclass_classification(i)
+    # for i in range(4, 7):
+    #     print(f'Split and write data for {i} clusters...')
+    #     split_data_for_multiclass_classification(i)
 
-    # multi_class_classification(4, f'clustered_data/clustered_data_4_centers.csv')
+    multi_class_classification(4)
     # for i in range(4, 7):
     #     print(f'Building model for {i} clusters...')
-    #     multi_class_classification(i, f'clustered_data/clustered_data_{i}_centers.csv')
+    #     multi_class_classification(i)
