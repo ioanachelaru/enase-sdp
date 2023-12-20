@@ -9,8 +9,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 # from sklearn.ensemble import RandomForestClassifier
 
-NO_EPOCHS = 10
-BATCH_SIZE = 32
+NO_EPOCHS = 20
+BATCH_SIZE = 16
 LOSS = 'binary_crossentropy'
 LEARNING_RATE = 0.001
 METRICS = ['accuracy']
@@ -18,6 +18,7 @@ ACTIVATION = ['relu', 'sigmoid']
 VERBOSE = 1
 
 def generate_confusion_matrix(y_true, y_pred, filename):
+    plt.clf()
     cm = confusion_matrix(y_true, y_pred)
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
     plt.xlabel("Predicted Label")
@@ -28,8 +29,10 @@ def generate_confusion_matrix(y_true, y_pred, filename):
 
 def create_model(input_dim):
     model = Sequential()
-    model.add(Dense(32, input_dim=input_dim, activation=ACTIVATION[0]))  # Input layer
-    model.add(Dense(64, activation=ACTIVATION[0]))  # Hidden layer
+    model.add(Dense(16, input_dim=input_dim, activation=ACTIVATION[0]))  # Input layer
+    model.add(Dense(32, activation=ACTIVATION[0]))  # Hidden layer
+    model.add(Dense(16, activation=ACTIVATION[0]))  # Hidden layer
+    model.add(Dense(16, activation=ACTIVATION[0]))  # Hidden layer
     model.add(Dense(1, activation=ACTIVATION[1]))  # Output layer
 
     model.compile(loss=LOSS, optimizer=Adam(learning_rate=LEARNING_RATE), metrics=METRICS)
