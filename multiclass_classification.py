@@ -132,7 +132,7 @@ if __name__ == '__main__':
     #     print(f'Split and write data for {i} clusters...')
     #     split_data_for_multiclass_classification(i)
 
-    multi_class_classification(4)
-    # for i in range(4, 7):
-    #     print(f'Building model for {i} clusters...')
-    #     multi_class_classification(i)
+    # multi_class_classification(4)
+    for i in range(5, 7):
+        print(f'Building model for {i} clusters...')
+        multi_class_classification(i)
