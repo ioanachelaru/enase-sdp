@@ -78,7 +78,7 @@ def read_data(filepath):
 def binary_classification(no_clusters, target_cluster, filename):
     x_train, x_val, x_test, y_train, y_val, y_test = read_data(filename)
 
-    model = create_model(65)
+    model = create_model(60)
     model = train_model(no_clusters, target_cluster, model, x_train, y_train, x_val, y_val)
 
     model.save(filename + 'binary_classif.keras')
