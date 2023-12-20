@@ -1,1 +1,1 @@
-Best: 0.959494 using {'activation': 'relu', 'hidden_layers': 1, 'learning_rate': 0.001, 'neurons_per_layer': 64}
+Best: 0.992152 using {'batch_size': 16, 'epochs': 30, 'hidden_layers': 3, 'learning_rate': 0.1, 'neurons_per_layer': 16}
