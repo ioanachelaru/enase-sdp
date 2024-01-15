@@ -52,22 +52,6 @@ def silhouette_clustering():
         print(f'Average silhouette score for {i} centers: ', visualizer.silhouette_score_)
         visualizer.show(outpath="clustering_images/silhouette_plot_2-7.png") 
 
-
-'''
-Labels the data for binary classification
-The data is labeled with 1 if the bug is in the target cluster and 0 otherwise
-'''
-def label_data_for_binary_classification(target_cluster, target_file):
-    all_data = read_csv_file('parsed_data/all_to_cluster.csv')
-    clustered_bugs = read_csv_file(f'clustered_data/{target_file}')
-
-    labeled_bugs = {key: ([1 if int(values[0]) == target_cluster else 0] + values[1:]) for key, values in clustered_bugs.items()}
-    labeled_data = {key: [0] + values for key, values in all_data.items()}
-
-    labeled_data.update(labeled_bugs)
-    
-    return labeled_data
-
 '''
 Clusters the data from the CSV file
 Creates plots for the clusters
@@ -80,12 +64,6 @@ def cluster_data(no_clusters=5):
 
     labeled_data = [[BUGS_IDs[i], y_kmeans[i]] + sublist for i, sublist in enumerate(BUGS_VALUES)]
     write_list_to_file(f'clustered_data/clustered_data_{no_clusters}_centers.csv', labeled_data)
-
-
-    for i in range(0, no_clusters):
-        data = label_data_for_binary_classification(i, f'clustered_data_{no_clusters}_centers.csv')
-        write_dict_to_file(f'data_to_cluster/{no_clusters}_clusters/labeled_data_for_cluster_{i}.csv', data)
-
 
     pca = PCA(n_components=2)
     principalComponents = pca.fit_transform(X)
