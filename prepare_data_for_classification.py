@@ -9,12 +9,12 @@ def split_data(x, y):
     # x_train, x_val, y_train, y_val = train_test_split(x_temp, y_temp, test_size=0.25, random_state=42)
 
     # extract test set
-    x_test = x[x[x.columns[0]].str.contains("1.15.0")]
-    y_test = y[y[y.columns[0]].str.contains("1.15.0")]
+    x_test = x[x[x.columns[0]].str.contains("1.15.0|1.14.0|1.13.0|1.12.0|1.11.0|1.10.0")]
+    y_test = y[y[y.columns[0]].str.contains("1.15.0|1.14.0|1.13.0|1.12.0|1.11.0|1.10.0")]
 
     # remove test set from data set
-    x = x[~x[x.columns[0]].str.contains("1.15.0")]
-    y = y[~y[y.columns[0]].str.contains("1.15.0")]
+    x = x[~x[x.columns[0]].str.contains("1.15.0|1.14.0|1.13.0|1.12.0|1.11.0|1.10.0")]
+    y = y[~y[y.columns[0]].str.contains("1.15.0|1.14.0|1.13.0|1.12.0|1.11.0|1.10.0")]
 
     # split data set into train and validation sets
     x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2, random_state=42)

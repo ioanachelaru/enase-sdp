@@ -10,7 +10,7 @@ import seaborn as sns
 from sklearn.metrics import roc_auc_score
 
 NO_EPOCHS = 15
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 LOSS = 'binary_crossentropy'
 LEARNING_RATE = 0.001
 METRICS = ['accuracy']
@@ -38,8 +38,7 @@ def create_model(input_dim):
     model.compile(loss=LOSS, optimizer=Adam(learning_rate=LEARNING_RATE), metrics=METRICS)
 
     return model
-
-
+ 
 def train_model(no_clusters, target_cluster, model, x_train, y_train, x_val, y_val):
 
     # Calculate class weights
@@ -71,8 +70,6 @@ def read_data(filepath):
     y_val = pd.read_csv(filepath + 'y_val.csv', index_col=0, header=None)
     y_test = pd.read_csv(filepath + 'y_test.csv', index_col=0, header=None)
     
-
-
     return x_train, x_val, x_test, y_train, y_val, y_test
 
 
@@ -96,17 +93,12 @@ def binary_classification(no_clusters, target_cluster, filename):
     # Compute confusion matrix
     generate_confusion_matrix(y_test, binary_predictions, filename + "confusion_matrix.png")
 
-    try:
-        # Compute ROC-AUC
-        roc_auc = roc_auc_score(y_test, predictions)
+    # Compute ROC-AUC
+    roc_auc = roc_auc_score(y_test, predictions)
 
-        tn, fp, fn, tp = confusion_matrix(y_test, binary_predictions).ravel()
-
-        # Compute specificity
-        specificity = tn / (tn + fp)
-    except:
-        roc_auc = None
-        specificity = None
+    # Compute specificity
+    tn, fp, fn, tp = confusion_matrix(y_test, binary_predictions).ravel()
+    specificity = tn / (tn + fp)
 
     # Save classification report to a file
     report = classification_report(y_test, binary_predictions, output_dict=True)
@@ -120,10 +112,13 @@ def binary_classification(no_clusters, target_cluster, filename):
         
 
 if __name__ == '__main__':
-    # binary_classification(5, 0, 'data_to_cluster/5_clusters/data_cluster_0/')
-    for i in range(4, 7):
-        print(f'Building model for {i} clusters...')
+    binary_classification(5, 0, 'data_to_cluster/5_clusters/data_cluster_0/')
+    # for i in range(4, 7):
+    #     print(f'Building model for {i} clusters...')
         
-        for ii in range(0, i):
-            print(f'...building model for cluster {ii}...')
-            binary_classification(i, ii, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
+    #     for ii in range(0, i):
+    #         print(f'...building model for cluster {ii}...')
+    #         binary_classification(i, ii, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
+    # for ii in range(0, 5):
+    #         print(f'...Building model for cluster {ii}...')
+    #         binary_classification(5, ii, f'data_to_cluster/5_clusters/data_cluster_{ii}/')
