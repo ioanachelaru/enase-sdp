@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
+from sklearn.metrics import roc_auc_score
 
 NO_EPOCHS = 15
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 LOSS = 'binary_crossentropy'
 LEARNING_RATE = 0.001
 METRICS = ['accuracy']
@@ -92,17 +93,34 @@ def binary_classification(no_clusters, target_cluster, filename):
     # Threshold predictions to convert probabilities to binary predictions
     binary_predictions = (predictions > 0.5).astype(int)
 
+    # Compute confusion matrix
+    generate_confusion_matrix(y_test, binary_predictions, filename + "confusion_matrix.png")
+
+    try:
+        # Compute ROC-AUC
+        roc_auc = roc_auc_score(y_test, predictions)
+
+        tn, fp, fn, tp = confusion_matrix(y_test, binary_predictions).ravel()
+
+        # Compute specificity
+        specificity = tn / (tn + fp)
+    except:
+        roc_auc = None
+        specificity = None
+
     # Save classification report to a file
     report = classification_report(y_test, binary_predictions, output_dict=True)
     report_df = pd.DataFrame(report).transpose()
+
+    # Add specificity and AUC to the report
+    report_df['specificity'] = specificity
+    report_df['ROC-AUC'] = roc_auc
+
     report_df.to_csv(filename + "classification_report.csv")
-    
-    generate_confusion_matrix(y_test, binary_predictions, filename + "confusion_matrix.png")
-
-
+        
 
 if __name__ == '__main__':
-    # binary_classification(4, 1, 'data_to_cluster/4_clusters/data_cluster_1/')
+    # binary_classification(5, 0, 'data_to_cluster/5_clusters/data_cluster_0/')
     for i in range(4, 7):
         print(f'Building model for {i} clusters...')
         
