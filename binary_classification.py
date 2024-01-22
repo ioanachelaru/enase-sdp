@@ -18,7 +18,7 @@ ACTIVATION = ['relu', 'sigmoid']
 VERBOSE = 1
 DOPOUT_RATE = 0.2
 
-CLASS_WEIGHT_MULTIPLIER = 1.5
+CLASS_WEIGHT_MULTIPLIER = 2
 
 
 def generate_confusion_matrix(y_true, y_pred, filename):

@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from prepare_data_for_classification import split_data
 
-CLASS_WEIGHT_MULTIPLIER = 1.5
+CLASS_WEIGHT_MULTIPLIER = 2
 
 def prepare_data():
     ALL_DATA = read_csv_file('parsed_data/all_to_cluster.csv')
