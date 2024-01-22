@@ -42,12 +42,12 @@ def create_model(input_dim):
 def train_model(no_clusters, target_cluster, model, x_train, y_train, x_val, y_val):
 
     # Calculate class weights
-    class_weights = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
+    # class_weights = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
 
     # Create a dictionary to pass to the model
-    class_weight = {i: w for i, w in enumerate(class_weights)}
+    # class_weight = {i: w for i, w in enumerate(class_weights)}
 
-    history = model.fit(x_train, y_train, validation_data=(x_val, y_val), class_weight=class_weight, 
+    history = model.fit(x_train, y_train, validation_data=(x_val, y_val),
                         epochs=NO_EPOCHS, batch_size=BATCH_SIZE, verbose=VERBOSE)
     
     plt.figure()
@@ -112,13 +112,13 @@ def binary_classification(no_clusters, target_cluster, filename):
         
 
 if __name__ == '__main__':
-    binary_classification(5, 0, 'data_to_cluster/5_clusters/data_cluster_0/')
+    # binary_classification(5, 0, 'data_to_cluster/5_clusters/data_cluster_0/')
     # for i in range(4, 7):
     #     print(f'Building model for {i} clusters...')
         
     #     for ii in range(0, i):
     #         print(f'...building model for cluster {ii}...')
     #         binary_classification(i, ii, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
-    # for ii in range(0, 5):
-    #         print(f'...Building model for cluster {ii}...')
-    #         binary_classification(5, ii, f'data_to_cluster/5_clusters/data_cluster_{ii}/')
+    for ii in range(0, 5):
+            print(f'...Building model for cluster {ii}...')
+            binary_classification(5, ii, f'data_to_cluster/5_clusters/data_cluster_{ii}/')

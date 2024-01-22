@@ -41,12 +41,12 @@ def binary_classification():
     model = create_model(60)
 
     # Calculate class weights
-    class_weights = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
+    # class_weights = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
 
     # Create a dictionary to pass to the model
-    class_weight = {i: w for i, w in enumerate(class_weights)}
+    # class_weight = {i: w for i, w in enumerate(class_weights)}
 
-    history = model.fit(x_train, y_train, validation_data=(x_val, y_val), class_weight=class_weight, 
+    history = model.fit(x_train, y_train, validation_data=(x_val, y_val),
                     epochs=NO_EPOCHS, batch_size=BATCH_SIZE, verbose=VERBOSE)
     plt.figure()
     plt.plot(history.history['loss'])
@@ -84,7 +84,7 @@ def binary_classification():
     report_df['specificity'] = specificity
     report_df['ROC-AUC'] = roc_auc
 
-    report_df.to_csv(f'bugs_vs_nonbugs/classification_report.csv', index=False)
+    report_df.to_csv(f'bugs_vs_nonbugs/classification_report.csv')
 
 
 if __name__ == '__main__':
