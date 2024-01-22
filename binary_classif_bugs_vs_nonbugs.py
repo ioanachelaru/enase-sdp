@@ -10,6 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from prepare_data_for_classification import split_data
 
+CLASS_WEIGHT_MULTIPLIER = 1.5
+
 def prepare_data():
     ALL_DATA = read_csv_file('parsed_data/all_to_cluster.csv')
     BUGS = read_csv_file('parsed_data/bugs_to_cluster.csv')
@@ -45,6 +47,7 @@ def binary_classification():
 
     # Create a dictionary to pass to the model
     class_weight = {i: w for i, w in enumerate(class_weights)}
+    class_weight[1] = class_weight[1] * CLASS_WEIGHT_MULTIPLIER
 
     history = model.fit(x_train, y_train, validation_data=(x_val, y_val), class_weight=class_weight, 
                     epochs=NO_EPOCHS, batch_size=BATCH_SIZE, verbose=VERBOSE)
@@ -84,7 +87,7 @@ def binary_classification():
     report_df['specificity'] = specificity
     report_df['ROC-AUC'] = roc_auc
 
-    report_df.to_csv(f'bugs_vs_nonbugs/classification_report.csv', index=False)
+    report_df.to_csv(f'bugs_vs_nonbugs/classification_report.csv')
 
 
 if __name__ == '__main__':
