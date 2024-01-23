@@ -8,6 +8,7 @@ from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 from sklearn.metrics import roc_auc_score
+from tensorflow.keras.models import load_model
 
 NO_EPOCHS = 15
 BATCH_SIZE = 16
@@ -109,16 +110,41 @@ def binary_classification(no_clusters, target_cluster, filename):
     report_df['ROC-AUC'] = roc_auc
 
     report_df.to_csv(filename + "classification_report.csv")
-        
+
+
+def evaluate_model(model_filename, output_filename):
+    # Read data
+    x_train, x_val, x_test, y_train, y_val, y_test = read_data(f'data_to_cluster/5_clusters/data_cluster_{ii}/')
+    
+    # Load the model
+    model = load_model(model_filename)
+
+    # Make predictions on the test set
+    predictions = model.predict(x_test)
+
+    # Threshold predictions to convert probabilities to binary predictions
+    binary_predictions = (predictions > 0.5).astype(int)
+
+    i = 0
+    with open(output_filename, 'w') as file:
+        for index, row in y_test.iterrows():
+            
+            if row.iloc[0] != binary_predictions[i] and binary_predictions[i] == 0:
+                file.write(f"{index}\n")
+            i += 1
+
+
 
 if __name__ == '__main__':
-    binary_classification(5, 0, 'data_to_cluster/5_clusters/data_cluster_0/')
+    # binary_classification(5, 0, 'data_to_cluster/5_clusters/data_cluster_0/')
     # for i in range(4, 7):
     #     print(f'Building model for {i} clusters...')
         
     #     for ii in range(0, i):
     #         print(f'...building model for cluster {ii}...')
     #         binary_classification(i, ii, f'data_to_cluster/{i}_clusters/data_cluster_{ii}/')
-    # for ii in range(0, 5):
-    #         print(f'...Building model for cluster {ii}...')
-    #         binary_classification(5, ii, f'data_to_cluster/5_clusters/data_cluster_{ii}/')
+    for ii in range(0, 5):
+            # print(f'...Building model for cluster {ii}...')
+            # binary_classification(5, ii, f'data_to_cluster/5_clusters/data_cluster_{ii}/')
+        print(f'...Evaluating model for cluster {ii}...')
+        evaluate_model(f'data_to_cluster/5_clusters/data_cluster_{ii}/binary_classif.keras', f'data_to_cluster/5_clusters/data_cluster_{ii}/wrong_predictions.txt')
