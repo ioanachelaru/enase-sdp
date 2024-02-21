@@ -129,7 +129,7 @@ def evaluate_model(model_filename, output_filename):
     with open(output_filename, 'w') as file:
         for index, row in y_test.iterrows():
             
-            if row.iloc[0] != binary_predictions[i] and binary_predictions[i] == 0:
+            if row.iloc[0] != binary_predictions[i] and binary_predictions[i] == 1:
                 file.write(f"{index}\n")
             i += 1
 
@@ -147,4 +147,4 @@ if __name__ == '__main__':
             # print(f'...Building model for cluster {ii}...')
             # binary_classification(5, ii, f'data_to_cluster/5_clusters/data_cluster_{ii}/')
         print(f'...Evaluating model for cluster {ii}...')
-        evaluate_model(f'data_to_cluster/5_clusters/data_cluster_{ii}/binary_classif.keras', f'data_to_cluster/5_clusters/data_cluster_{ii}/wrong_predictions.txt')
+        evaluate_model(f'data_to_cluster/5_clusters/data_cluster_{ii}/binary_classif.keras', f'data_to_cluster/5_clusters/data_cluster_{ii}/wrong_predictions_nondefects.txt')
