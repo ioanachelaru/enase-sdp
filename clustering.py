@@ -7,7 +7,8 @@ from yellowbrick.cluster import SilhouetteVisualizer
 from sklearn.decomposition import PCA
    
 
-BUGS = read_csv_file('parsed_data/bugs_to_cluster.csv')
+# BUGS = read_csv_file('parsed_data/bugs_to_cluster.csv')
+BUGS = read_csv_file('parsed_data/SM_bugs_to_cluster.csv')
 BUGS_IDs = [key for key in BUGS.keys()]
 BUGS_VALUES = [[float(item) for item in value] for value in BUGS.values()]
 X = np.array(BUGS_VALUES)
@@ -23,7 +24,7 @@ def elbow_clustering():
     visualizer = KElbowVisualizer(km, k=(2,10))
     
     visualizer.fit(X)
-    visualizer.show(outpath="clustering_images/elbow_plot.png")
+    visualizer.show(outpath="clustering_images/SM_elbow_plot.png")
 
 
 '''
@@ -42,15 +43,15 @@ Average silhouette score for 7 centers:  0.0815382219412979
 
 '''
 def silhouette_clustering():
-    fig, ax = plt.subplots(3, 2, figsize=(30,20))
-    for i in range(2, 8):
+    fig, ax = plt.subplots(2, 2, figsize=(30,20))
+    for i in range(2, 6):
         km = KMeans(n_clusters=i, init='k-means++', n_init=10, max_iter=100, random_state=42)
         q, mod = divmod(i, 2)
         
         visualizer = SilhouetteVisualizer(km, colors='yellowbrick', ax=ax[q-1][mod])
         visualizer.fit(X)
         print(f'Average silhouette score for {i} centers: ', visualizer.silhouette_score_)
-        visualizer.show(outpath="clustering_images/silhouette_plot_2-7.png") 
+        visualizer.show(outpath="clustering_images/SM_silhouette_plot_2-5.png")
 
 '''
 Clusters the data from the CSV file
@@ -63,7 +64,7 @@ def cluster_data(no_clusters=5):
     y_kmeans = kmeans.predict(X)
 
     labeled_data = [[BUGS_IDs[i], y_kmeans[i]] + sublist for i, sublist in enumerate(BUGS_VALUES)]
-    write_list_to_file(f'clustered_data/clustered_data_{no_clusters}_centers.csv', labeled_data)
+    write_list_to_file(f'clustered_data/SM_clustered_data_{no_clusters}_centers.csv', labeled_data)
 
     pca = PCA(n_components=2)
     principalComponents = pca.fit_transform(X)
@@ -74,7 +75,7 @@ def cluster_data(no_clusters=5):
     plt.ylabel('Principal Component 2')
     plt.title(f'Clustering with {no_clusters} centers')
 
-    plt.savefig(f'clustering_images/clustering_{no_clusters}_centers.png')
+    plt.savefig(f'clustering_images/SM_clustering_{no_clusters}_centers.png')
         
 
 if __name__ == '__main__':
